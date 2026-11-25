@@ -2,15 +2,20 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+
 def convert_png(path: Path):
     print(f"Converting {path.name}")
 
     img = Image.open(path).convert("RGBA")
     rgba = np.asarray(img).astype(np.float32) / 255.0
 
+    # MTFW_UI_DDS2PNG.py writes its decoded green into the PNG's BLUE slot and
+    # its decoded blue into the PNG's GREEN slot (the "swap green and blue"
+    # step). This encoder has to mirror that, otherwise the DDS carries the
+    # chroma in the wrong channels and every coloured pixel comes back purple.
     r = rgba[..., 0]
-    g = rgba[..., 1]
-    b = rgba[..., 2]
+    b = rgba[..., 1]   # PNG green == decoder's blue
+    g = rgba[..., 2]   # PNG blue  == decoder's green
     alpha = rgba[..., 3]
 
     Y = (r + 2.0 * g + b) / 4.0

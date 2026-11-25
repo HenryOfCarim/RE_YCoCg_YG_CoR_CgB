@@ -34,7 +34,7 @@ def convert_dds(path: Path):
     ], axis=-1)
 
     out_path = path.with_suffix(".png")
-    Image.fromarray((rgba_out * 255).astype(np.uint8), "RGBA").save(out_path)
+    Image.fromarray((rgba_out * 255).round().astype(np.uint8), "RGBA").save(out_path)
 
 
 if __name__ == "__main__":
